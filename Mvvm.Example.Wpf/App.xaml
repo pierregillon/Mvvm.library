@@ -1,0 +1,9 @@
+﻿<Application x:Class="Mvvm.Example.Wpf.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:example="clr-namespace:Mvvm.Example;assembly=Mvvm.Example"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+         <example:ViewModelLocator x:Key="Locator"/>
+    </Application.Resources>
+</Application>
