@@ -69,10 +69,12 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="AsyncRelayCommandTests.cs" />
     <Compile Include="BusTests.cs" />
     <Compile Include="DependencyPropertyTrackerTests.cs" />
     <Compile Include="NotifiableObjectTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelayCommandTests.cs" />
     <Compile Include="ValidationViewModelTests.cs" />
     <Compile Include="ValidationRulesBuilderTests.cs" />
   </ItemGroup>
