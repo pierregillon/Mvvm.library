@@ -5,13 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Creation of a new user"
+        WindowStartupLocation="CenterScreen"
         DataContext="{Binding Path=CreateUserViewModel, Source={StaticResource ResourceKey=Locator}}"
-        d:DesignWidth="318.537" d:DesignHeight="171.175">
+        Visibility="{Binding Path=IsVisible, Mode=TwoWay, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}"
+        Width="318.537" Height="181.175"
+        d:DataContext="">
     <Grid>
         <Grid.Resources>
-            <Style TargetType="TextBox">
+            <Style x:Key="ControlValidationStyle" TargetType="Control">
+                <Setter Property="Validation.ErrorTemplate">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <DockPanel LastChildFill="true">
+                                <Border Background="Red" DockPanel.Dock="right" Margin="5,0,0,0" Width="20" Height="20"
+                                        CornerRadius="10"
+                                        ToolTip="{Binding ElementName=customAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                                    <TextBlock Text="!" VerticalAlignment="center" HorizontalAlignment="center"
+                                               FontWeight="Bold" Foreground="white" />
+                                </Border>
+                                <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center">
+                                    <Border BorderBrush="red" BorderThickness="1" />
+                                </AdornedElementPlaceholder>
+                            </DockPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="TextBox" BasedOn="{StaticResource ControlValidationStyle}">
                 <Setter Property="Width" Value="150" />
-                <Setter Property="Margin" Value="2" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,2,40,2" />
+                
             </Style>
             <Style x:Key="TitleStyle" TargetType="TextBlock">
                 <Setter Property="Width" Value="100" />
@@ -19,9 +43,9 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="Margin" Value="10,0" />
             </Style>
-            <Style TargetType="DatePicker">
+            <Style TargetType="DatePicker" BasedOn="{StaticResource ControlValidationStyle}">
                 <Setter Property="Width" Value="150" />
-                <Setter Property="Margin" Value="2" />
+                <Setter Property="Margin" Value="0,2,40,2" />
             </Style>
             <Style x:Key="ActionButtonStyle" TargetType="Button">
                 <Setter Property="Width" Value="90" />
@@ -33,27 +57,31 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="First name :" Style="{StaticResource TitleStyle}" />
-                <TextBox Text="{Binding Path=FirstName, Mode=TwoWay}" />
+                <TextBox Text="{Binding Path=FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, NotifyOnValidationError=true}"
+                         ToolTip="{Binding ElementName=customAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Last name :" Style="{StaticResource TitleStyle}" />
-                <TextBox Text="{Binding Path=LastName, Mode=TwoWay}" />
+                <TextBox Text="{Binding Path=LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, NotifyOnValidationError=true}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Birth date :" Style="{StaticResource TitleStyle}" />
-                <DatePicker SelectedDate="{Binding Path=BirthDate, Mode=TwoWay}" />
+                <DatePicker SelectedDate="{Binding Path=BirthDate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnDataErrors=true, NotifyOnValidationError=true}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Age :" Style="{StaticResource TitleStyle}" />
                 <TextBlock Text="{Binding Path=Age, Mode=OneWay}" Margin="2, 0, 0, 0" FontWeight="Bold"/>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Foreground="Red" 
+                   Text="{Binding Path=NextValidationError, Mode=OneWay}"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Command="{Binding Path=CancelCommand}" Style="{StaticResource ActionButtonStyle}">Cancel</Button>
             <Button Command="{Binding Path=CreateCommand}" Style="{StaticResource ActionButtonStyle}">Create</Button>
         </StackPanel>

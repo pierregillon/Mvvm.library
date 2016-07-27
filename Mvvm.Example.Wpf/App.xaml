@@ -4,6 +4,7 @@
              xmlns:example="clr-namespace:Mvvm.Example;assembly=Mvvm.Example"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         <example:ViewModelLocator x:Key="Locator"/>
+        <example:ViewModelLocator x:Key="Locator" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Application.Resources>
 </Application>

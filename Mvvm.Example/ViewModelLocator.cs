@@ -1,15 +1,13 @@
-﻿namespace Mvvm.Example
+﻿using Mvvm.Routing;
+using Mvvm.Time;
+
+namespace Mvvm.Example
 {
     public class ViewModelLocator
     {
-        public CreateUserViewModel CreateUserViewModel
-        {
-            get { return new CreateUserViewModel(); }
-        }
+        private static readonly Bus Bus = new Bus();
 
-        public MainViewModel MainViewModel
-        {
-            get { return new MainViewModel(); }
-        }
+        public CreateUserViewModel CreateUserViewModel { get; } = new CreateUserViewModel(new Clock(), Bus);
+        public MainViewModel MainViewModel { get; } = new MainViewModel(Bus);
     }
 }
