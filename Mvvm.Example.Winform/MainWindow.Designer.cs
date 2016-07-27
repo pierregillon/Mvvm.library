@@ -1,4 +1,4 @@
-﻿using Mvvm.Example.Winform.Controls;
+﻿using Mvvm.Winform.BindingToolkit.Controls;
 
 namespace Mvvm.Example.Winform
 {

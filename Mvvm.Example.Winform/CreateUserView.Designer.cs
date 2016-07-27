@@ -1,4 +1,4 @@
-﻿using Mvvm.Example.Winform.Controls;
+﻿using Mvvm.Winform.BindingToolkit.Controls;
 
 namespace Mvvm.Example.Winform
 {
@@ -42,9 +42,9 @@ namespace Mvvm.Example.Winform
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.nextValidationErrorLabel = new System.Windows.Forms.Label();
             this.busyProgressBar = new System.Windows.Forms.ProgressBar();
-            this.birthDatePicker = new Mvvm.Example.Winform.Controls.UltraDateTimePicker();
-            this.cancelButton = new Mvvm.Example.Winform.Controls.CommandButton();
-            this.createButton = new Mvvm.Example.Winform.Controls.CommandButton();
+            this.birthDatePicker = new UltraDateTimePicker();
+            this.cancelButton = new CommandButton();
+            this.createButton = new CommandButton();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.birthDatePicker)).BeginInit();

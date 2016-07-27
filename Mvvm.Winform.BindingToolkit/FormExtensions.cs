@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace Mvvm.Example.Winform.Utils
+namespace Mvvm.Winform.BindingToolkit
 {
     public static class FormExtensions
     {

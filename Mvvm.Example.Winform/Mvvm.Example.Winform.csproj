@@ -46,18 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\CommandButton.cs" />
-    <Compile Include="Controls\UltraDateTimePicker.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="CreateUserView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CreateUserView.Designer.cs">
       <DependentUpon>CreateUserView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Utils\ControlExtensions.cs" />
-    <Compile Include="Utils\FormExtensions.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +90,10 @@
     <ProjectReference Include="..\Mvvm.Example\Mvvm.Example.csproj">
       <Project>{E06E2B8E-32BA-442F-B744-753FB1B93678}</Project>
       <Name>Mvvm.Example</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mvvm.Winform.BindingToolkit\Mvvm.Winform.BindingToolkit.csproj">
+      <Project>{ea5fcb70-c99c-407a-ad9c-fbccf23d89f9}</Project>
+      <Name>Mvvm.Winform.BindingToolkit</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mvvm\Mvvm.csproj">
       <Project>{914f735c-2bd9-4b3b-873c-17638ae95193}</Project>

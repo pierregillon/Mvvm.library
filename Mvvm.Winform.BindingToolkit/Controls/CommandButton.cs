@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 
-namespace Mvvm.Example.Winform.Controls
+namespace Mvvm.Winform.BindingToolkit.Controls
 {
     [DesignerCategory("")]
     public class CommandButton : Button

@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Mvvm.Example.Winform.Utils;
+using Mvvm.Winform.BindingToolkit;
 
 namespace Mvvm.Example.Winform
 {

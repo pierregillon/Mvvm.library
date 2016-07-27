@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Mvvm.Example.Winform.Controls
+namespace Mvvm.Winform.BindingToolkit.Controls
 {
     /// <summary>
     /// The following code is written from scratch, but was inspired by
