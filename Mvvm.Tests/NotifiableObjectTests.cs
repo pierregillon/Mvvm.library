@@ -9,13 +9,14 @@ namespace Mvvm.Tests
     public class NotifiableObject_should
     {
         private readonly Person _person;
-        private readonly List<PropertyChangedEventArgs> _propertyChangedEvents;
+        private readonly List<PropertyChangedEventArgs> _propertyChangedEvents = new List<PropertyChangedEventArgs>();
+        private readonly List<PropertyChangingEventArgs> _propertyChangingEvents = new List<PropertyChangingEventArgs>();
 
         public NotifiableObject_should()
         {
             _person = new Person {FirstName = "Georges", LastName = "Washington"};
-            _propertyChangedEvents = new List<PropertyChangedEventArgs>();
             _person.PropertyChanged += (sender, args) => { _propertyChangedEvents.Add(args); };
+            _person.PropertyChanging += (sender, args) => { _propertyChangingEvents.Add(args); };
         }
 
         [Fact]
@@ -33,6 +34,25 @@ namespace Mvvm.Tests
 
             Check.That(_propertyChangedEvents).HasSize(1);
             Check.That(_propertyChangedEvents[0].PropertyName).IsEqualTo("Nickname");
+        }
+
+        [Fact]
+        public void raise_property_changing_when_setting_notifiable_property()
+        {
+            _person.Nickname = "Dupond";
+
+            Check.That(_propertyChangingEvents).HasSize(1);
+            Check.That(_propertyChangingEvents[0].PropertyName).IsEqualTo("Nickname");
+        }
+
+        [Fact]
+        public void raise_property_changing_before_setting_value()
+        {
+            _person.PropertyChanging += (sender, args) => {
+                Check.That(_person.Nickname).IsNull();
+            };
+
+            _person.Nickname = "Dupond";
         }
 
         [Fact]
