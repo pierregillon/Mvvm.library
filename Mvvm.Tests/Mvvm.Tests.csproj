@@ -69,6 +69,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="BusTests.cs" />
     <Compile Include="DependencyPropertyTrackerTests.cs" />
     <Compile Include="NotifiableObjectTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
