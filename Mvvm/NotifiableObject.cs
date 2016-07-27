@@ -52,7 +52,7 @@ namespace Mvvm
             if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
             lock (_locker) {
                 if (_notifiableProperties.ContainsKey(propertyName) == false) {
-                    _notifiableProperties.Add(propertyName, null);
+                    _notifiableProperties.Add(propertyName, default(T));
                 }
                 var oldValue = (T) _notifiableProperties[propertyName];
                 if (Equals(oldValue, newValue) == false) {
