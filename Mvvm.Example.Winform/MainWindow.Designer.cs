@@ -1,4 +1,6 @@
-﻿namespace Mvvm.Example.Winform
+﻿using Mvvm.Example.Winform.Controls;
+
+namespace Mvvm.Example.Winform
 {
     partial class MainWindow
     {
@@ -28,24 +30,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            this.displayCreateNewUserButton = new CommandButton();
             this.SuspendLayout();
             // 
-            // button1
+            // displayCreateNewUserButton
             // 
-            this.button1.Location = new System.Drawing.Point(85, 111);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(103, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Create new user";
-            this.button1.UseVisualStyleBackColor = true;
+            this.displayCreateNewUserButton.Location = new System.Drawing.Point(85, 111);
+            this.displayCreateNewUserButton.Name = "displayCreateNewUserButton";
+            this.displayCreateNewUserButton.Size = new System.Drawing.Size(103, 23);
+            this.displayCreateNewUserButton.TabIndex = 0;
+            this.displayCreateNewUserButton.Text = "Create new user";
+            this.displayCreateNewUserButton.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.displayCreateNewUserButton);
             this.Name = "MainWindow";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -54,7 +56,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private CommandButton displayCreateNewUserButton;
     }
 }
 
