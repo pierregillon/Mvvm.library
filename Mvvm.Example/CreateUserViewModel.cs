@@ -22,6 +22,11 @@ namespace Mvvm.Example
             get { return GetNotifiableProperty<bool>(); }
             set { SetNotifiableProperty(value); }
         }
+        public bool IsLoading
+        {
+            get { return GetNotifiableProperty<bool>(); }
+            set { SetNotifiableProperty(value); }
+        }
         public string FirstName
         {
             get { return GetNotifiableProperty<string>(); }
@@ -67,8 +72,14 @@ namespace Mvvm.Example
         }
         private async Task CreateAsync()
         {
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            IsVisible = false;
+            try {
+                IsLoading = true;
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                IsVisible = false;
+            }
+            finally {
+                IsLoading = false;
+            }
         }
         private void Cancel()
         {

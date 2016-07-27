@@ -41,6 +41,7 @@ namespace Mvvm.Example.Winform
             this.yearsOldLabel = new System.Windows.Forms.Label();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.nextValidationErrorLabel = new System.Windows.Forms.Label();
+            this.busyProgressBar = new System.Windows.Forms.ProgressBar();
             this.birthDatePicker = new Mvvm.Example.Winform.Controls.UltraDateTimePicker();
             this.cancelButton = new Mvvm.Example.Winform.Controls.CommandButton();
             this.createButton = new Mvvm.Example.Winform.Controls.CommandButton();
@@ -51,6 +52,7 @@ namespace Mvvm.Example.Winform
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.busyProgressBar);
             this.panel1.Controls.Add(this.cancelButton);
             this.panel1.Controls.Add(this.createButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -139,6 +141,16 @@ namespace Mvvm.Example.Winform
             this.nextValidationErrorLabel.Text = "validation errors";
             this.nextValidationErrorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // busyProgressBar
+            // 
+            this.busyProgressBar.Location = new System.Drawing.Point(3, 3);
+            this.busyProgressBar.MarqueeAnimationSpeed = 40;
+            this.busyProgressBar.Name = "busyProgressBar";
+            this.busyProgressBar.Size = new System.Drawing.Size(106, 23);
+            this.busyProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.busyProgressBar.TabIndex = 2;
+            this.busyProgressBar.Visible = false;
+            // 
             // birthDatePicker
             // 
             this.birthDatePicker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -213,5 +225,6 @@ namespace Mvvm.Example.Winform
         private System.Windows.Forms.Label yearsOldLabel;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.Label nextValidationErrorLabel;
+        private System.Windows.Forms.ProgressBar busyProgressBar;
     }
 }

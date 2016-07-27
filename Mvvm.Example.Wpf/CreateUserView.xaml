@@ -9,6 +9,7 @@
         DataContext="{Binding Path=CreateUserViewModel, Source={StaticResource ResourceKey=Locator}}"
         Visibility="{Binding Path=IsVisible, Mode=TwoWay, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}"
         Width="318.537" Height="181.175"
+        IsEnabled="{Binding Path=IsLoading, Converter={StaticResource ResourceKey=ReverseBooleanConverter}}"
         d:DataContext="">
     <Grid>
         <Grid.Resources>
@@ -85,5 +86,7 @@
             <Button Command="{Binding Path=CancelCommand}" Style="{StaticResource ActionButtonStyle}">Cancel</Button>
             <Button Command="{Binding Path=CreateCommand}" Style="{StaticResource ActionButtonStyle}">Create</Button>
         </StackPanel>
+        <ProgressBar Grid.Row="2" Width="100" HorizontalAlignment="Left" Margin="2" IsIndeterminate="True"
+                     Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}"/>
     </Grid>
 </Window>

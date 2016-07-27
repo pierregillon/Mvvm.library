@@ -16,12 +16,22 @@ namespace Mvvm.Example.Winform
             birthDatePicker.DataBindings.Add(nameof(birthDatePicker.Value), _viewModel, nameof(_viewModel.BirthDate), true, DataSourceUpdateMode.OnPropertyChanged);
             yearsOldLabel.DataBindings.Add(nameof(yearsOldLabel.Text), _viewModel, nameof(_viewModel.Age), true, DataSourceUpdateMode.OnPropertyChanged);
             nextValidationErrorLabel.DataBindings.Add(nameof(nextValidationErrorLabel.Text), _viewModel, nameof(_viewModel.NextValidationError), true, DataSourceUpdateMode.OnPropertyChanged);
+            busyProgressBar.BindVisibility(_viewModel, x => x.IsLoading);
+
+            var binding = DataBindings.Add(nameof(Enabled), _viewModel, nameof(_viewModel.IsLoading), true, DataSourceUpdateMode.OnPropertyChanged);
+            binding.Parse += ReverseBoolean;
+            binding.Format += ReverseBoolean;
 
             createButton.Command = _viewModel.CreateCommand;
             cancelButton.Command = _viewModel.CancelCommand;
             errorProvider.DataSource = _viewModel;
 
             this.BindPopupVisibility(_viewModel, x => x.IsVisible);
+        }
+
+        private static void ReverseBoolean(object sender, ConvertEventArgs args)
+        {
+            args.Value = (bool)args.Value == false;
         }
     }
 }
