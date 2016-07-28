@@ -15,26 +15,27 @@ namespace Mvvm
             if (target == null) throw new ArgumentNullException(nameof(target));
 
             var allProperties = target.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .ToArray();
 
-            var properties = allProperties
-                .Where(x => x.SetMethod != null)
+            var dependencyInformations = allProperties
+                .Where(x => x.GetSetMethod(true) != null || x.DeclaringType?.GetProperty(x.Name).GetSetMethod(true) != null)
                 .Select(x => new DependencyInformation {Name = x.Name, GetMethod = x.GetMethod})
-                .ToDictionary(x => x.GetMethod);
+                .ToList();
 
-            var calculatedProperties = allProperties.Where(x => x.SetMethod == null).ToArray();
+            var calculatedProperties = allProperties
+                .Where(x => x.GetSetMethod(true) == null && x.DeclaringType?.GetProperty(x.Name).GetSetMethod(true) == null)
+                .ToArray();
 
             foreach (var propertyInfo in calculatedProperties) {
                 foreach (var instruction in propertyInfo.GetMethod.GetInstructions()) {
                     var callToMethod = instruction.Operand as MethodInfo;
                     if (callToMethod != null) {
-                        DependencyInformation dependencyInformation;
-                        if (properties.TryGetValue(callToMethod, out dependencyInformation)) {
-                            if (_dependentProperties.ContainsKey(dependencyInformation.Name) == false) {
-                                _dependentProperties.Add(dependencyInformation.Name, new List<string>());
+                        foreach (var dependencyInformation in dependencyInformations) {
+                            if (dependencyInformation.GetMethod.ToString() == callToMethod.ToString()) {
+                                AddDependentProperty(dependencyInformation, propertyInfo);
+                                break;
                             }
-                            _dependentProperties[dependencyInformation.Name].Add(propertyInfo.Name);
                         }
                     }
                 }
@@ -48,6 +49,14 @@ namespace Mvvm
                 return dependentPropertyNames;
             }
             return new List<string>();
+        }
+
+        private void AddDependentProperty(DependencyInformation keyValuePair, PropertyInfo propertyInfo)
+        {
+            if (_dependentProperties.ContainsKey(keyValuePair.Name) == false) {
+                _dependentProperties.Add(keyValuePair.Name, new List<string>());
+            }
+            _dependentProperties[keyValuePair.Name].Add(propertyInfo.Name);
         }
 
         private class DependencyInformation

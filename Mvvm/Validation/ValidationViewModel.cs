@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,26 +7,20 @@ using System.Linq;
 
 namespace Mvvm.Validation
 {
-    public abstract class ValidationViewModel : NotifiableObject, IDataErrorInfo
+    public abstract class ValidationViewModel : NotifiableObject, INotifyDataErrorInfo
     {
         private readonly Dictionary<string, List<IValidationRule>> _validationRules;
-        private readonly Dictionary<string, string> _errors = new Dictionary<string, string>();
+        private readonly Dictionary<string, List<string>> _errors = new Dictionary<string, List<string>>();
 
-        public bool HasValidationErrors
-        {
-            get { return GetNotifiableProperty<bool>(); }
-            private set { SetNotifiableProperty(value); }
-        }
-        public string NextValidationError
-        {
-            get { return GetNotifiableProperty<string>(); }
-            private set { SetNotifiableProperty(value); }
-        }
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
         public List<string> ValidationErrors
         {
             get { return GetNotifiableProperty<List<string>>(); }
             private set { SetNotifiableProperty(value); }
         }
+        public string NextValidationError => ValidationErrors.FirstOrDefault(error => string.IsNullOrEmpty(error) == false);
+        public bool HasValidationErrors => ValidationErrors.Any();
 
         // ----- Constructors
         protected ValidationViewModel()
@@ -38,19 +33,16 @@ namespace Mvvm.Validation
             ValidationErrors = new List<string>();
         }
 
-        // ----- IDataErrorInfo
-        string IDataErrorInfo.this[string propertyName]
+        // ----- INotifyDataErrorInfo
+        bool INotifyDataErrorInfo.HasErrors => HasValidationErrors;
+        IEnumerable INotifyDataErrorInfo.GetErrors(string propertyName)
         {
-            get
-            {
-                string error;
-                if (_errors.TryGetValue(propertyName, out error)) {
-                    return error;
-                }
-                return null;
+            List<string> validationErrors;
+            if (_errors.TryGetValue(propertyName, out validationErrors)) {
+                return validationErrors;
             }
+            return Enumerable.Empty<string>();
         }
-        string IDataErrorInfo.Error => NextValidationError;
 
         // ----- Validation methods
         public void FeedAllValidationErrors()
@@ -59,7 +51,7 @@ namespace Mvvm.Validation
                 EvaluateRules(propertyName);
                 base.RaisePropertyChanged(propertyName);
             }
-            UpdateValidationProperties();
+            RaiseValidationPropertiesChanged();
         }
         public void ClearValidationErrors()
         {
@@ -67,11 +59,15 @@ namespace Mvvm.Validation
             foreach (var propertyName in _validationRules.Keys) {
                 base.RaisePropertyChanged(propertyName);
             }
-            UpdateValidationProperties();
+            RaiseValidationPropertiesChanged();
         }
         protected bool AreAllValidationRulesValid()
         {
             return _validationRules.Values.SelectMany(x => x).All(x => x.IsValid());
+        }
+        protected virtual void RaiseErrorsChanged(string propertyName)
+        {
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
         // ----- Override / Abstract
@@ -79,14 +75,16 @@ namespace Mvvm.Validation
         {
             if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
 
-            if (propertyName != nameof(ValidationErrors) && propertyName != nameof(NextValidationError) && propertyName != nameof(HasValidationErrors)) {
+            if (propertyName != nameof(ValidationErrors) && propertyName != nameof(NextValidationError) &&
+                propertyName != nameof(HasValidationErrors)) {
                 EvaluateRules(propertyName);
             }
 
             base.RaisePropertyChanged(propertyName);
 
-            if (propertyName != nameof(ValidationErrors) && propertyName != nameof(NextValidationError) && propertyName != nameof(HasValidationErrors)) {
-                UpdateValidationProperties();
+            if (propertyName != nameof(ValidationErrors) && propertyName != nameof(NextValidationError) &&
+                propertyName != nameof(HasValidationErrors)) {
+                RaiseValidationPropertiesChanged();
             }
         }
         protected abstract void ConfigureValidationRules(ValidationRuleBuilder builder);
@@ -97,23 +95,26 @@ namespace Mvvm.Validation
             List<IValidationRule> rules;
             if (_validationRules.TryGetValue(propertyName, out rules)) {
                 if (_errors.ContainsKey(propertyName) == false) {
-                    _errors.Add(propertyName, null);
+                    _errors.Add(propertyName, new List<string>());
                 }
-                _errors[propertyName] = rules.FirstOrDefault(validationRule => !validationRule.IsValid())?.ErrorMessage;
+
+                var currentErrors = _errors[propertyName];
+                var newErrors = rules
+                    .Where(validationRule => !validationRule.IsValid())
+                    .Select(x => x.ErrorMessage)
+                    .ToArray();
+
+                if (currentErrors.SequenceEqual(newErrors) == false) {
+                    currentErrors.Clear();
+                    currentErrors.AddRange(newErrors);
+                    RaiseErrorsChanged(propertyName);
+                }
             }
         }
-        private void EvaluateAllRules()
+        private void RaiseValidationPropertiesChanged()
         {
-            foreach (var propertyName in _validationRules.Keys) {
-                EvaluateRules(propertyName);
-            }
-        }
-        private void UpdateValidationProperties()
-        {
-            if (_errors.Values.SequenceEqual(ValidationErrors) == false) {
-                ValidationErrors = _errors.Values.ToList();
-                NextValidationError = ValidationErrors.FirstOrDefault(error => string.IsNullOrEmpty(error) == false);
-                HasValidationErrors = _errors.Values.Any(error => string.IsNullOrEmpty(error) == false);
+            if (_errors.Values.SelectMany(x => x).SequenceEqual(ValidationErrors) == false) {
+                ValidationErrors = _errors.Values.SelectMany(x => x).ToList();
             }
         }
     }
