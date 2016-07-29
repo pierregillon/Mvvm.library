@@ -32,6 +32,9 @@ namespace Mvvm.Example.Winform
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.busyProgressBar = new System.Windows.Forms.ProgressBar();
+            this.cancelButton = new Mvvm.Winform.BindingToolkit.Controls.CommandButton();
+            this.createButton = new Mvvm.Winform.BindingToolkit.Controls.CommandButton();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -40,11 +43,10 @@ namespace Mvvm.Example.Winform
             this.lastNameTextBox = new System.Windows.Forms.TextBox();
             this.yearsOldLabel = new System.Windows.Forms.Label();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.birthDatePicker = new Mvvm.Winform.BindingToolkit.Controls.UltraDateTimePicker();
             this.nextValidationErrorLabel = new System.Windows.Forms.Label();
-            this.busyProgressBar = new System.Windows.Forms.ProgressBar();
-            this.birthDatePicker = new UltraDateTimePicker();
-            this.cancelButton = new CommandButton();
-            this.createButton = new CommandButton();
+            this.showAllValidationErrorsButton = new Mvvm.Winform.BindingToolkit.Controls.CommandButton();
+            this.hideValidationErrorsButton = new Mvvm.Winform.BindingToolkit.Controls.CommandButton();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.birthDatePicker)).BeginInit();
@@ -58,8 +60,38 @@ namespace Mvvm.Example.Winform
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 154);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(274, 29);
+            this.panel1.Size = new System.Drawing.Size(345, 29);
             this.panel1.TabIndex = 0;
+            // 
+            // busyProgressBar
+            // 
+            this.busyProgressBar.Location = new System.Drawing.Point(3, 3);
+            this.busyProgressBar.MarqueeAnimationSpeed = 40;
+            this.busyProgressBar.Name = "busyProgressBar";
+            this.busyProgressBar.Size = new System.Drawing.Size(106, 23);
+            this.busyProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.busyProgressBar.TabIndex = 2;
+            this.busyProgressBar.Visible = false;
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Location = new System.Drawing.Point(186, 3);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 1;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            // 
+            // createButton
+            // 
+            this.createButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.createButton.Location = new System.Drawing.Point(267, 3);
+            this.createButton.Name = "createButton";
+            this.createButton.Size = new System.Drawing.Size(75, 23);
+            this.createButton.TabIndex = 0;
+            this.createButton.Text = "Create";
+            this.createButton.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -104,7 +136,7 @@ namespace Mvvm.Example.Winform
             this.errorProvider.SetIconPadding(this.firstNameTextBox, 5);
             this.firstNameTextBox.Location = new System.Drawing.Point(78, 12);
             this.firstNameTextBox.Name = "firstNameTextBox";
-            this.firstNameTextBox.Size = new System.Drawing.Size(171, 20);
+            this.firstNameTextBox.Size = new System.Drawing.Size(242, 20);
             this.firstNameTextBox.TabIndex = 5;
             // 
             // lastNameTextBox
@@ -114,7 +146,7 @@ namespace Mvvm.Example.Winform
             this.errorProvider.SetIconPadding(this.lastNameTextBox, 5);
             this.lastNameTextBox.Location = new System.Drawing.Point(78, 36);
             this.lastNameTextBox.Name = "lastNameTextBox";
-            this.lastNameTextBox.Size = new System.Drawing.Size(171, 20);
+            this.lastNameTextBox.Size = new System.Drawing.Size(242, 20);
             this.lastNameTextBox.TabIndex = 6;
             // 
             // yearsOldLabel
@@ -131,26 +163,6 @@ namespace Mvvm.Example.Winform
             this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this.errorProvider.ContainerControl = this;
             // 
-            // nextValidationErrorLabel
-            // 
-            this.nextValidationErrorLabel.ForeColor = System.Drawing.Color.Red;
-            this.nextValidationErrorLabel.Location = new System.Drawing.Point(0, 132);
-            this.nextValidationErrorLabel.Name = "nextValidationErrorLabel";
-            this.nextValidationErrorLabel.Size = new System.Drawing.Size(271, 19);
-            this.nextValidationErrorLabel.TabIndex = 9;
-            this.nextValidationErrorLabel.Text = "validation errors";
-            this.nextValidationErrorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // busyProgressBar
-            // 
-            this.busyProgressBar.Location = new System.Drawing.Point(3, 3);
-            this.busyProgressBar.MarqueeAnimationSpeed = 40;
-            this.busyProgressBar.Name = "busyProgressBar";
-            this.busyProgressBar.Size = new System.Drawing.Size(106, 23);
-            this.busyProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.busyProgressBar.TabIndex = 2;
-            this.busyProgressBar.Visible = false;
-            // 
             // birthDatePicker
             // 
             this.birthDatePicker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -160,35 +172,49 @@ namespace Mvvm.Example.Winform
             this.birthDatePicker.Location = new System.Drawing.Point(78, 60);
             this.birthDatePicker.Name = "birthDatePicker";
             this.birthDatePicker.NullText = "Choose a date";
-            this.birthDatePicker.Size = new System.Drawing.Size(171, 20);
+            this.birthDatePicker.Size = new System.Drawing.Size(242, 20);
             this.birthDatePicker.TabIndex = 7;
             this.birthDatePicker.Value = null;
             // 
-            // cancelButton
+            // nextValidationErrorLabel
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(115, 3);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
+            this.nextValidationErrorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nextValidationErrorLabel.ForeColor = System.Drawing.Color.Red;
+            this.nextValidationErrorLabel.Location = new System.Drawing.Point(0, 130);
+            this.nextValidationErrorLabel.Name = "nextValidationErrorLabel";
+            this.nextValidationErrorLabel.Size = new System.Drawing.Size(251, 19);
+            this.nextValidationErrorLabel.TabIndex = 9;
+            this.nextValidationErrorLabel.Text = "validation errors";
+            this.nextValidationErrorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // createButton
+            // showAllValidationErrorsButton
             // 
-            this.createButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.createButton.Location = new System.Drawing.Point(196, 3);
-            this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(75, 23);
-            this.createButton.TabIndex = 0;
-            this.createButton.Text = "Create";
-            this.createButton.UseVisualStyleBackColor = true;
+            this.showAllValidationErrorsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.showAllValidationErrorsButton.Location = new System.Drawing.Point(253, 128);
+            this.showAllValidationErrorsButton.Name = "showAllValidationErrorsButton";
+            this.showAllValidationErrorsButton.Size = new System.Drawing.Size(46, 23);
+            this.showAllValidationErrorsButton.TabIndex = 10;
+            this.showAllValidationErrorsButton.Text = "Show";
+            this.showAllValidationErrorsButton.UseVisualStyleBackColor = true;
+            // 
+            // hideValidationErrorsButton
+            // 
+            this.hideValidationErrorsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.hideValidationErrorsButton.Location = new System.Drawing.Point(298, 128);
+            this.hideValidationErrorsButton.Name = "hideValidationErrorsButton";
+            this.hideValidationErrorsButton.Size = new System.Drawing.Size(44, 23);
+            this.hideValidationErrorsButton.TabIndex = 11;
+            this.hideValidationErrorsButton.Text = "Hide";
+            this.hideValidationErrorsButton.UseVisualStyleBackColor = true;
             // 
             // CreateUserView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(274, 183);
+            this.ClientSize = new System.Drawing.Size(345, 183);
+            this.Controls.Add(this.hideValidationErrorsButton);
+            this.Controls.Add(this.showAllValidationErrorsButton);
             this.Controls.Add(this.nextValidationErrorLabel);
             this.Controls.Add(this.yearsOldLabel);
             this.Controls.Add(this.birthDatePicker);
@@ -226,5 +252,7 @@ namespace Mvvm.Example.Winform
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.Label nextValidationErrorLabel;
         private System.Windows.Forms.ProgressBar busyProgressBar;
+        private CommandButton hideValidationErrorsButton;
+        private CommandButton showAllValidationErrorsButton;
     }
 }

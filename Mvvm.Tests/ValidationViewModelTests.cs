@@ -35,7 +35,7 @@ namespace Mvvm.Tests
         }
 
         [Fact]
-        public void raise_property_changed_for_validation_properties_when_invalid_value()
+        public void notify_property_changed_for_validation_properties_when_invalid_value()
         {
             _personViewModel.FirstName = "  ";
 
@@ -55,7 +55,7 @@ namespace Mvvm.Tests
         }
 
         [Fact]
-        public void raise_error_changed_when_setting_invalid_value()
+        public void notify_error_changed_when_setting_invalid_value()
         {
             _personViewModel.FirstName = "  ";
 
@@ -63,7 +63,7 @@ namespace Mvvm.Tests
         }
 
         [Fact]
-        public void not_raise_error_changed_when_setting_invalid_value_with_same_validation_rule()
+        public void not_notify_error_changed_when_setting_invalid_value_with_same_validation_rule()
         {
             _personViewModel.FirstName = "  ";
             _errorPropertyNames.Clear();
@@ -73,7 +73,7 @@ namespace Mvvm.Tests
         }
 
         [Fact]
-        public void not_raise_property_changed_for_validation_properties_when_value_always_invalid()
+        public void not_notify_property_changed_for_validation_properties_when_value_always_invalid()
         {
             _personViewModel.FirstName = "  ";
             _propertyNames.Clear();
@@ -108,31 +108,49 @@ namespace Mvvm.Tests
         }
 
         [Fact]
-        public void raise_property_changed_for_all_validation_properties_when_feeding_all()
+        public void notify_property_changed_for_all_validation_properties_when_feeding_all()
         {
             _personViewModel.FeedAllValidationErrors();
 
             Check.That(_propertyNames).ContainsExactly(
-               nameof(_personViewModel.FirstName),
-               nameof(_personViewModel.LastName),
-               nameof(_personViewModel.ValidationErrors),
-               nameof(_personViewModel.NextValidationError),
-               nameof(_personViewModel.HasValidationErrors));
+                nameof(_personViewModel.ValidationErrors),
+                nameof(_personViewModel.NextValidationError),
+                nameof(_personViewModel.HasValidationErrors));
         }
 
         [Fact]
-        public void raise_property_changed_for_all_validation_properties_when_clearing_all()
+        public void notify_property_changed_for_all_validation_properties_when_clearing_all()
         {
             _personViewModel.FeedAllValidationErrors();
             _propertyNames.Clear();
             _personViewModel.ClearValidationErrors();
 
             Check.That(_propertyNames).ContainsExactly(
-               nameof(_personViewModel.FirstName),
-               nameof(_personViewModel.LastName),
-               nameof(_personViewModel.ValidationErrors),
-               nameof(_personViewModel.NextValidationError),
-               nameof(_personViewModel.HasValidationErrors));
+                nameof(_personViewModel.ValidationErrors),
+                nameof(_personViewModel.NextValidationError),
+                nameof(_personViewModel.HasValidationErrors));
+        }
+
+        [Fact]
+        public void notify_error_changed_for_properties_with_validation_rules_when_feeding_all()
+        {
+            _personViewModel.FeedAllValidationErrors();
+
+            Check.That(_errorPropertyNames).ContainsExactly(
+                nameof(_personViewModel.FirstName),
+                nameof(_personViewModel.LastName));
+        }
+
+        [Fact]
+        public void notify_error_changed_for_properties_with_validation_rules_when_clearing_all()
+        {
+            _personViewModel.FeedAllValidationErrors();
+            _errorPropertyNames.Clear();
+            _personViewModel.ClearValidationErrors();
+
+            Check.That(_errorPropertyNames).ContainsExactly(
+                nameof(_personViewModel.FirstName),
+                nameof(_personViewModel.LastName));
         }
 
         // ----- Internal logics

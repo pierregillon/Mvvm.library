@@ -34,22 +34,26 @@ namespace Mvvm.Validation
         }
 
         // ----- INotifyDataErrorInfo
-        bool INotifyDataErrorInfo.HasErrors => HasValidationErrors;
+        bool INotifyDataErrorInfo.HasErrors => _errors.Values.SelectMany(x => x).Any();
         IEnumerable INotifyDataErrorInfo.GetErrors(string propertyName)
         {
-            List<string> validationErrors;
-            if (_errors.TryGetValue(propertyName, out validationErrors)) {
-                return validationErrors;
+            if (string.IsNullOrEmpty(propertyName)) {
+                return _errors.Values.SelectMany(x => x).ToArray();
             }
-            return Enumerable.Empty<string>();
+            else {
+                List<string> validationErrors;
+                if (_errors.TryGetValue(propertyName, out validationErrors)) {
+                    return validationErrors;
+                }
+                return Enumerable.Empty<string>();
+            }
         }
 
         // ----- Validation methods
         public void FeedAllValidationErrors()
         {
             foreach (var propertyName in _validationRules.Keys) {
-                EvaluateRules(propertyName);
-                base.RaisePropertyChanged(propertyName);
+                EvaluateValidationStateAndRaise(propertyName);
             }
             RaiseValidationPropertiesChanged();
         }
@@ -57,7 +61,7 @@ namespace Mvvm.Validation
         {
             _errors.Clear();
             foreach (var propertyName in _validationRules.Keys) {
-                base.RaisePropertyChanged(propertyName);
+                RaiseErrorsChanged(propertyName);
             }
             RaiseValidationPropertiesChanged();
         }
@@ -65,32 +69,9 @@ namespace Mvvm.Validation
         {
             return _validationRules.Values.SelectMany(x => x).All(x => x.IsValid());
         }
-        protected virtual void RaiseErrorsChanged(string propertyName)
-        {
-            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
 
         // ----- Override / Abstract
-        protected override void RaisePropertyChanged(string propertyName = null)
-        {
-            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
-
-            if (propertyName != nameof(ValidationErrors) && propertyName != nameof(NextValidationError) &&
-                propertyName != nameof(HasValidationErrors)) {
-                EvaluateRules(propertyName);
-            }
-
-            base.RaisePropertyChanged(propertyName);
-
-            if (propertyName != nameof(ValidationErrors) && propertyName != nameof(NextValidationError) &&
-                propertyName != nameof(HasValidationErrors)) {
-                RaiseValidationPropertiesChanged();
-            }
-        }
-        protected abstract void ConfigureValidationRules(ValidationRuleBuilder builder);
-
-        // ----- Internal logics
-        private void EvaluateRules(string propertyName)
+        private void EvaluateValidationStateAndRaise(string propertyName)
         {
             List<IValidationRule> rules;
             if (_validationRules.TryGetValue(propertyName, out rules)) {
@@ -110,6 +91,30 @@ namespace Mvvm.Validation
                     RaiseErrorsChanged(propertyName);
                 }
             }
+        }
+        protected virtual void RaiseErrorsChanged(string propertyName)
+        {
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+        }
+        protected override void RaisePropertyChanged(string propertyName = null)
+        {
+            if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+
+            base.RaisePropertyChanged(propertyName);
+
+            if (IsValidationProperty(propertyName) == false) {
+                EvaluateValidationStateAndRaise(propertyName);
+                RaiseValidationPropertiesChanged();
+            }
+        }
+        protected abstract void ConfigureValidationRules(ValidationRuleBuilder builder);
+
+        // ----- Internal logics
+        private bool IsValidationProperty(string propertyName)
+        {
+            return propertyName == nameof(ValidationErrors) ||
+                   propertyName == nameof(NextValidationError) ||
+                   propertyName == nameof(HasValidationErrors);
         }
         private void RaiseValidationPropertiesChanged()
         {

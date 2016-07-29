@@ -1,6 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Mvvm.Commands;
 using Mvvm.Routing;
 using Mvvm.Time;
@@ -9,13 +10,15 @@ using ICommand = Mvvm.Commands.ICommand;
 
 namespace Mvvm.Example
 {
-    public class CreateUserViewModel : ValidationViewModel
+    public class CreateUserViewModel : ValidationViewModel, IDataErrorInfo
     {
         private readonly IClock _clock;
         private readonly IBus _bus;
 
         public ICommand CancelCommand { get; }
         public IAsyncCommand CreateCommand { get; }
+        public ICommand ShowAllValidationErrorsCommand { get; }
+        public ICommand HideValidationErrorsCommand { get; }
 
         public bool IsVisible
         {
@@ -62,6 +65,9 @@ namespace Mvvm.Example
             CreateCommand = new AsyncRelayCommand(CreateAsync, CanCreate);
             CancelCommand = new RelayCommand(Cancel);
 
+            ShowAllValidationErrorsCommand = new RelayCommand(FeedAllValidationErrors);
+            HideValidationErrorsCommand = new RelayCommand(ClearValidationErrors);
+
             _bus.Register<DisplayNewUserView>(this, OnDisplayNewUserView);
         }
 
@@ -91,6 +97,10 @@ namespace Mvvm.Example
         {
             IsVisible = true;
         }
+
+        // ----- IDataErrorInfo for winform
+        string IDataErrorInfo.this[string columnName] => ((INotifyDataErrorInfo)this).GetErrors(columnName).Cast<string>().FirstOrDefault();
+        string IDataErrorInfo.Error => NextValidationError;
 
         // ----- Overrides
         protected override void ConfigureValidationRules(ValidationRuleBuilder builder)

@@ -24,6 +24,8 @@ namespace Mvvm.Example.Winform
 
             createButton.Command = _viewModel.CreateCommand;
             cancelButton.Command = _viewModel.CancelCommand;
+            showAllValidationErrorsButton.Command = _viewModel.ShowAllValidationErrorsCommand;
+            hideValidationErrorsButton.Command = _viewModel.HideValidationErrorsCommand;
             errorProvider.DataSource = _viewModel;
 
             this.BindPopupVisibility(_viewModel, x => x.IsVisible);
