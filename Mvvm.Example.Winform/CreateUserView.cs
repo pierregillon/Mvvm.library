@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using Mvvm.Example.Winform.Converters;
 using Mvvm.Winform.BindingToolkit;
 
 namespace Mvvm.Example.Winform
@@ -11,16 +12,44 @@ namespace Mvvm.Example.Winform
         {
             InitializeComponent();
 
-            firstNameTextBox.DataBindings.Add(nameof(firstNameTextBox.Text), _viewModel, nameof(_viewModel.FirstName), true, DataSourceUpdateMode.OnPropertyChanged);
-            lastNameTextBox.DataBindings.Add(nameof(lastNameTextBox.Text), _viewModel, nameof(_viewModel.LastName), true, DataSourceUpdateMode.OnPropertyChanged);
-            birthDatePicker.DataBindings.Add(nameof(birthDatePicker.Value), _viewModel, nameof(_viewModel.BirthDate), true, DataSourceUpdateMode.OnPropertyChanged);
-            yearsOldLabel.DataBindings.Add(nameof(yearsOldLabel.Text), _viewModel, nameof(_viewModel.Age), true, DataSourceUpdateMode.OnPropertyChanged);
-            nextValidationErrorLabel.DataBindings.Add(nameof(nextValidationErrorLabel.Text), _viewModel, nameof(_viewModel.NextValidationError), true, DataSourceUpdateMode.OnPropertyChanged);
-            busyProgressBar.BindVisibility(_viewModel, x => x.IsLoading);
+            firstNameTextBox
+                .Bind(x => x.Text)
+                .To(_viewModel)
+                .On(x => x.FirstName)
+                .TwoWay();
 
-            var binding = DataBindings.Add(nameof(Enabled), _viewModel, nameof(_viewModel.IsLoading), true, DataSourceUpdateMode.OnPropertyChanged);
-            binding.Parse += ReverseBoolean;
-            binding.Format += ReverseBoolean;
+            lastNameTextBox
+                .Bind(x => x.Text)
+                .To(_viewModel)
+                .On(x => x.LastName)
+                .TwoWay();
+
+            birthDatePicker
+                .Bind(x => x.Value)
+                .To(_viewModel)
+                .On(x => x.BirthDate)
+                .TwoWay();
+
+            yearsOldLabel
+                .Bind(x => x.Text)
+                .To(_viewModel)
+                .On(x => x.Age)
+                .OneWay();
+
+            nextValidationErrorLabel
+                .Bind(x => x.Text)
+                .To(_viewModel)
+                .On(x => x.NextValidationError)
+                .OneWay();
+
+            this
+                .Bind(x => x.Enabled)
+                .To(_viewModel)
+                .On(x => x.IsLoading)
+                .OneWay()
+                .UseConverter(new InverseBooleanConverter());
+
+            busyProgressBar.BindVisibility(_viewModel, x => x.IsLoading);
 
             createButton.Command = _viewModel.CreateCommand;
             cancelButton.Command = _viewModel.CancelCommand;
@@ -29,11 +58,6 @@ namespace Mvvm.Example.Winform
             errorProvider.DataSource = _viewModel;
 
             this.BindPopupVisibility(_viewModel, x => x.IsVisible);
-        }
-
-        private static void ReverseBoolean(object sender, ConvertEventArgs args)
-        {
-            args.Value = (bool)args.Value == false;
         }
     }
 }
